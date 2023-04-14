@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Books List</h1>
+    <form method="get" action="{% url 'search_results' %}">
+        <label for="title">Title:</label>
+        <input type="text" name="title" id="title">
+        <br>
+        <label for="author">Author:</label>
+        <input type="text" name="author" id="author">
+        <br>
+        <label for="izdat">Publication:</label>
+        <input type="text" name="izdat" id="izdat">
+        <br>
+        <label for="category">Category</label>
+        <input type="text" name="category" id="category">
+        <br>
+        <label for="invented_number">Invented number:</label>
+        <input type="text" name="invented_number" id="invented_number">
+        <br>
+        <button type="submit">Filter</button>
+
+    </form>
+    <hr>
+    <ul>
+    {% for book in books %}
+        <li>{{ book.name }} - {{ book.author }} - {{ book.izdat }} - {{ book.category }} - {{ book.invented_number }}</li>
+    {% empty %}
+        <li>No books found.</li>
+    {% endfor %}
+    </ul>
+    <hr>
+    <ul>
+        {% for i in book_titles %}
+            <li>{{ i.name }} - {{ i.author }} - {{ i.izdat }} - {{ i.category }} - {{ i.invented_number }}</li>
+        {% empty %}
+            <li>No books yet!</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

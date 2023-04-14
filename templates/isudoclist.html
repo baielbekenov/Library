@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Issued_doc_List</title>
+</head>
+<body>
+    {% for request in issuedoc %}
+    <p>{{ request.name }}</p>
+
+    {% empty %}
+        <p>Нет запросов.</p>
+    {% endfor %}
+</body>
+</html>
