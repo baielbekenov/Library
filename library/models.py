@@ -80,17 +80,15 @@ class Order(models.Model):
         return str(self.book)
 
 
-class Chat(models.Model):
-    title = models.CharField(max_length=123, verbose_name='Название', default='.', blank=True)
+class Room(models.Model):
+    name = models.CharField(max_length=123, verbose_name='Название', default='.', blank=True)
     description = models.TextField(default='.', blank=True)
     avatar = models.ImageField(upload_to='images/avatars/%Y/%m/%d/', verbose_name='Изображение', blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавление')
-    is_privat = models.BooleanField(default=False, blank=True)
-    users = models.ManyToManyField(User, related_name='chats_user')
-    is_active = models.BooleanField(default=True, blank=True)
+    slug = models.SlugField(unique=True)
 
     def __str__(self):
-        return self.title
+        return self.name
 
     class Meta:
         verbose_name = 'Чат'
@@ -99,10 +97,10 @@ class Chat(models.Model):
 
 
 class Message(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='messages')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='messages')
     content = models.TextField(verbose_name='Сообщение')
-    date = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавление')
-    chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
+    date_added = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавление')
 
     def __str__(self):
         return self.content

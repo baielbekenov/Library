@@ -7,4 +7,6 @@ urlpatterns = [
     path('createIsudoc/', IssuedDocumentCreateView.as_view(), name='createIsudoc'),
     path('isudoclist/', IssuedDocumentListView.as_view(), name='isudoclist'),
     path('search_results/', search, name='search_results'),
-    ]
+    path('rooms/', rooms, name='rooms'),
+    path("<str:room_name>/", room, name="room"),
+]

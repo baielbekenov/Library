@@ -1,5 +1,5 @@
 from django.contrib import admin
-from library.models import User, Barcode, Book, IssuedDocument, Order, Category, Message, Chat
+from library.models import User, Barcode, Book, IssuedDocument, Order, Category, Message, Room
 
 # Register your models here.
 admin.site.register(User)
@@ -9,4 +9,4 @@ admin.site.register(IssuedDocument)
 admin.site.register(Order)
 admin.site.register(Category)
 admin.site.register(Message)
-admin.site.register(Chat)
+admin.site.register(Room)

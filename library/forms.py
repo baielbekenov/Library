@@ -20,3 +20,4 @@ class BookFilterForm(forms.Form):
 class MessageSendForm(forms.ModelForm):
     class Meta:
         model = Message
+        fields = ['user', 'room', 'content']

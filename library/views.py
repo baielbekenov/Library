@@ -2,16 +2,15 @@ from barcode import generate
 from barcode.base import Barcode
 from django.core.mail import message
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
 from PIL import Image
+from django.views.decorators.http import require_POST
 from django.views.generic import FormView, ListView, CreateView
-from pywebio.session import defer_call
-from pyzbar import pyzbar
 
-from library.forms import IssuedDocumentForm, BookFilterForm
-from library.models import User, Book, Barcode, IssuedDocument, Message
+from library.forms import IssuedDocumentForm, BookFilterForm, MessageSendForm
+from library.models import User, Book, Barcode, IssuedDocument, Message, Room
 
 
 # Create your views here.
@@ -19,12 +18,6 @@ def index(request):
     queryset = User.objects.all()
     context = {'queryset': queryset}
     return render(request, 'index.html', context)
-
-
-def send_message(request, pk):
-    pk = User.objects.get(id=pk)
-
-    return render(request, 'send_message.html', context)
 
 
 class IssuedDocumentCreateView(CreateView):
@@ -75,6 +68,13 @@ def search(request):
         book_titles = set([book.name for book in books])
     context = {'books': books, 'form': form, 'book_titles': book_titles}
     return render(request, 'search_results.html', context)
+
+
+def rooms(request):
+    return render(request, "rooms.html")
+
+def room(request, room_name):
+    return render(request, "room.html", {"room_name": room_name})
 
 
 
