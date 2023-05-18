@@ -2,44 +2,90 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <title>Title</title>
 </head>
 <body>
-    <h1>Books List</h1>
-    <form method="get" action="{% url 'search_results' %}">
-        <label for="title">Title:</label>
-        <input type="text" name="title" id="title">
-        <br>
-        <label for="author">Author:</label>
-        <input type="text" name="author" id="author">
-        <br>
-        <label for="izdat">Publication:</label>
-        <input type="text" name="izdat" id="izdat">
-        <br>
-        <label for="category">Category</label>
-        <input type="text" name="category" id="category">
-        <br>
-        <label for="invented_number">Invented number:</label>
-        <input type="text" name="invented_number" id="invented_number">
-        <br>
-        <button type="submit">Filter</button>
+    <div class="container my-5">
+        <h1>Книги</h1>
+        <form method="get" action="{% url 'search_results' %}">
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" class="form-control" name="title" id="title">
+            </div>
+            <br>
+            <div class="form-group">
+                <label for="author">Author:</label>
+                <input type="text" class="form-control" name="author" id="author">
+            </div>
+            <br>
+            <div class="form-group">
+                <label for="izdat">Publication:</label>
+                <input type="text" class="form-control" name="izdat" id="izdat">
+            </div>
+            <br>
+            <div class="form-group">
+                <label for="category">Category</label>
+                <input type="text" class="form-control"  name="category" id="category">
+            </div>
+            <br>
+            <div class="form-group">
+                <label for="invented_number">Invented number:</label>
+                <input type="text" class="form-control"  name="invented_number" id="invented_number">
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Фильтровать</button>
+        </form>
 
-    </form>
-    <hr>
-    <ul>
-    {% for book in books %}
-        <li>{{ book.name }} - {{ book.author }} - {{ book.izdat }} - {{ book.category }} - {{ book.invented_number }}</li>
-    {% empty %}
-        <li>No books found.</li>
-    {% endfor %}
-    </ul>
-    <hr>
-    <ul>
-        {% for i in book_titles %}
-            <li>{{ i.name }} - {{ i.author }} - {{ i.izdat }} - {{ i.category }} - {{ i.invented_number }}</li>
+        <div>
+            <p></p>
+        </div>
+
+        <div class="container">
+        <table class="table table-dark">
+            {% for book in books %}
+          <thead>
+            <tr>
+              <th scope="col">Название книги</th>
+              <th scope="col">Автор</th>
+              <th scope="col">Издательство</th>
+              <th scope="col">Категории</th>
+              <th scope="col">Инвентарный номер</th>
+              <th scope="col">Том</th>
+              <th scope="col">Часть</th>
+              <th scope="col">Место</th>
+              <th scope="col">Год издания</th>
+              <th scope="col">Количество страниц</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">{{ book.name }}</th>
+              <td>{{ book.author }}</td>
+              <td>{{ book.izdat }}</td>
+              <td>{{ book.category }}</td>
+              <td>{{ book.invented_number }}</td>
+              <td>{{ request.tom }}</td>
+              <td>{{ request.part }}</td>
+              <td>{{ request.place }}</td>
+              <td>{{ request.created_year }}</td>
+              <td>{{ request.amount_of_pages }}</td>
+            </tr>
+          </tbody>
         {% empty %}
-            <li>No books yet!</li>
+            <li>Книг не найдено</li>
         {% endfor %}
-    </ul>
+        </table>
+    </div>
+
+<!--        <hr>-->
+<!--        <ul>-->
+<!--            {% for i in book_titles %}-->
+<!--                <li>{{ i.name }} - {{ i.author }} - {{ i.izdat }} - {{ i.category }} - {{ i.invented_number }}</li>-->
+<!--            {% empty %}-->
+<!--                <li>Пока нет книг</li>-->
+<!--            {% endfor %}-->
+<!--        </ul>-->
+<!--    </div>-->
 </body>
 </html>

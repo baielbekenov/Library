@@ -1,9 +1,12 @@
+from datetime import timezone, datetime
 from io import BytesIO
 import barcode
 from barcode.writer import ImageWriter
 from django.core.files import File
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+
+from library.managers import ThreadManager
 
 
 class User(AbstractUser):
@@ -32,8 +35,10 @@ class Barcode(models.Model):
         self.barcode.save('barcode.png', File(buffer), save=False)
         return super().save(*args, **kwargs)
 
+
 class Category(models.Model):
     name = models.CharField(max_length=200, verbose_name='Название')
+    image = models.ImageField(upload_to='photos', verbose_name='Изображения', blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -42,7 +47,10 @@ class Category(models.Model):
 class Book(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название')
     author = models.CharField(max_length=100, verbose_name='Автор', default='Неизвестно')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория', default='')
+    barcode = models.ForeignKey(Barcode, on_delete=models.CASCADE, verbose_name='Баркод')
+    is_digital = models.BooleanField(default=False, verbose_name='Цифровой')
+    file = models.FileField(verbose_name='Файл', blank=True, null=True)
     tom = models.IntegerField(verbose_name='Том', blank=True, null=True)
     part = models.CharField(max_length=50, verbose_name='Часть', blank=True, null=True)
     izdat = models.CharField(max_length=100, verbose_name='Издательство', blank=True, null=True)
@@ -57,7 +65,7 @@ class Book(models.Model):
 
 class IssuedDocument(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название книги')
-    author_document = models.ForeignKey(User, on_delete=models.CASCADE)
+    author_document = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор книги')
     izdat_year = models.DateField(verbose_name='Год издания книги')
     date_issued = models.DateField(verbose_name='Дата выдачи документа')
     name_of_reader = models.CharField(max_length=150, verbose_name='ФИО получателя')
@@ -72,39 +80,37 @@ class IssuedDocument(models.Model):
         return self.name
 
 
-class Order(models.Model):
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
 
-    def __str__(self):
-        return str(self.book)
-
-
-class Room(models.Model):
-    name = models.CharField(max_length=123, verbose_name='Название', default='.', blank=True)
-    description = models.TextField(default='.', blank=True)
-    avatar = models.ImageField(upload_to='images/avatars/%Y/%m/%d/', verbose_name='Изображение', blank=True, null=True)
-    date = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавление')
-    slug = models.SlugField(unique=True)
-
-    def __str__(self):
-        return self.name
+class TrackingModel(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = 'Чат'
-        verbose_name_plural = 'Чаты'
-        ordering = ['-date']
+        abstract = True
 
 
-class Message(models.Model):
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='messages')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='messages')
-    content = models.TextField(verbose_name='Сообщение')
-    date_added = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавление')
+class Thread(TrackingModel):
+    THREAD_TYPE = (
+        ('personal', 'Personal'),
+        ('group', 'Group')
+    )
 
-    def __str__(self):
-        return self.content
+    name = models.CharField(max_length=50, null=True, blank=True)
+    thread_type = models.CharField(max_length=15, choices=THREAD_TYPE, default='group')
+    users = models.ManyToManyField(User)
 
-    class Meta:
-        verbose_name = 'Сообщение'
-        verbose_name_plural = 'Сообщении'
+    objects = ThreadManager()
+
+    def __str__(self) -> str:
+        if self.thread_type == 'personal' and self.users.count() == 2:
+            return f'{self.users.first()} and {self.users.last()}'
+        return f'{self.name}'
+
+
+class Message(TrackingModel):
+    thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField(blank=False, null=False)
+
+    def __str__(self) -> str:
+        return f'From <Thread - {self.thread}>'

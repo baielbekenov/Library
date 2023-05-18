@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'daphne',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'library',
+    'crispy_forms',
+    'crispy_bootstrap4',
 ]
 
 
@@ -54,6 +57,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'main.urls'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+ASGI_APPLICATION = 'main.asgi.application'
 
 TEMPLATES = [
     {
@@ -74,7 +80,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'main.wsgi.application'
-ASGI_APPLICATION = 'main.asgi.application'
+
 AUTH_USER_MODEL = 'library.User'
 
 # Database
@@ -84,6 +90,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        "TEST": {
+            "NAME": BASE_DIR / "db.sqlite3",
+        },
     }
 }
 
@@ -136,8 +145,6 @@ STATICFILES_DIRS = (
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-ASGI_APPlICATION = 'main.asgi.application'
-
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -146,3 +153,4 @@ CHANNEL_LAYERS = {
         },
     },
 }
+

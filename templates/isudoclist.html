@@ -2,14 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Issued_doc_List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <title>Список выданных книг</title>
 </head>
 <body>
-    {% for request in issuedoc %}
-    <p>{{ request.name }}</p>
-
-    {% empty %}
+    <div class="container">
+        <table class="table table-dark">
+          <thead>
+            <tr>
+              <th scope="col">Название книги</th>
+              <th scope="col">Автор</th>
+              <th scope="col">Год издания</th>
+              <th scope="col">Дата выдачи книги</th>
+              <th scope="col">ФИО получателя</th>
+              <th scope="col">Номер читательского билета</th>
+              <th scope="col">Названия библиотеки</th>
+            </tr>
+          </thead>
+            {% for request in issuedoc %}
+          <tbody>
+            <tr>
+              <th scope="row">{{ request.name }}</th>
+              <td>{{ request.author_document }}</td>
+              <td>{{ request.izdat_year }}</td>
+              <td>{{ request.date_issued }}</td>
+                <td>{{ request.name_of_reader }}</td>
+                <td>{{ request.number_read_bilet }}</td>
+                <td>{{ request.name_of_lib }}</td>
+            </tr>
+          </tbody>
+        {% empty %}
         <p>Нет запросов.</p>
-    {% endfor %}
+        {% endfor %}
+        </table>
+    </div>
 </body>
 </html>

@@ -10,7 +10,7 @@
     <h1><a href="{% url 'isudoclist' %}">Кому выдано книг</a></h1>
 
     {% for i in queryset %}
-    <p>{{ i.username }} <a href="">Написать</a></p>
+    <p>{{ i.username }} <a href="{% url 'chat' i.username %}">Написать</a></p>
 
     {% endfor %}
 

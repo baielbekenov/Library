@@ -1,12 +1,11 @@
 from django.contrib import admin
-from library.models import User, Barcode, Book, IssuedDocument, Order, Category, Message, Room
+from library.models import User, Message, Thread, Barcode, Book, IssuedDocument, Category
 
 # Register your models here.
 admin.site.register(User)
 admin.site.register(Barcode)
 admin.site.register(Book)
 admin.site.register(IssuedDocument)
-admin.site.register(Order)
 admin.site.register(Category)
 admin.site.register(Message)
-admin.site.register(Room)
+admin.site.register(Thread)
