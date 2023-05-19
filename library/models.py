@@ -6,8 +6,6 @@ from django.core.files import File
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-from library.managers import ThreadManager
-
 
 class User(AbstractUser):
     is_employee = models.BooleanField(verbose_name=('Сотрудник'), default=False)
@@ -25,7 +23,7 @@ class Barcode(models.Model):
     number_id = models.CharField(max_length=5, null=True)
 
     def __str__(self):
-        return str(self.name)
+        return str(self.country_id + self.manufactured_id + self.number_id)
 
     def save(self, *args, **kwargs):
         EAN = barcode.get_barcode_class('ean13')
@@ -65,52 +63,18 @@ class Book(models.Model):
 
 class IssuedDocument(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название книги')
-    author_document = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор книги')
+    author_document = models.CharField(max_length=60, verbose_name='Автор книги')
     izdat_year = models.DateField(verbose_name='Год издания книги')
     date_issued = models.DateField(verbose_name='Дата выдачи документа')
     name_of_reader = models.CharField(max_length=150, verbose_name='ФИО получателя')
     number_read_bilet = models.IntegerField(verbose_name='Номер читательского билета')
-    name_of_lib = models.CharField(max_length=100, verbose_name='Названия библиотеки')
+    name_of_lib = models.CharField(max_length=100, verbose_name='Из какой категории')
 
     def __str__(self):
         return self.name
 
 
-    def __str__(self):
-        return self.name
-
-
-
-class TrackingModel(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
-
-
-class Thread(TrackingModel):
-    THREAD_TYPE = (
-        ('personal', 'Personal'),
-        ('group', 'Group')
-    )
-
-    name = models.CharField(max_length=50, null=True, blank=True)
-    thread_type = models.CharField(max_length=15, choices=THREAD_TYPE, default='group')
-    users = models.ManyToManyField(User)
-
-    objects = ThreadManager()
-
-    def __str__(self) -> str:
-        if self.thread_type == 'personal' and self.users.count() == 2:
-            return f'{self.users.first()} and {self.users.last()}'
-        return f'{self.name}'
-
-
-class Message(TrackingModel):
-    thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
-    sender = models.ForeignKey(User, on_delete=models.CASCADE)
-    text = models.TextField(blank=False, null=False)
-
-    def __str__(self) -> str:
-        return f'From <Thread - {self.thread}>'
+class Message(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    title = models.CharField(max_length=50, blank=True, null=True)
+    text = models.TextField()

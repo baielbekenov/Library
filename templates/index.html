@@ -1,18 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Главная страница</title>
-</head>
-<body>
-    <h1><a href="{% url 'search_results' %}">Поиск по фильтрам</a></h1>
-    <h1><a href="{% url 'createIsudoc' %}">Выдать книгу</a></h1>
-    <h1><a href="{% url 'isudoclist' %}">Кому выдано книг</a></h1>
+{% extends 'base.html' %}
 
-    {% for i in queryset %}
-    <p>{{ i.username }} <a href="{% url 'chat' i.username %}">Написать</a></p>
+{% block title %}Книги{% endblock %}
 
-    {% endfor %}
-
-</body>
-</html>
+{% block content %}
+  <div class="list-group">
+    <button type="button" class="list-group-item list-group-item-action active" aria-current="true">
+      Книги
+    </button>
+      {% for i in books %}
+    <a href="{% url 'book_detail' i.pk %}"><button type="button" class="list-group-item list-group-item-action">{{ i.name }}</button></a>
+      {% endfor %}
+  </div>
+  <div>
+    <button type="button" class="list-group-item list-group-item-action active" aria-current="true">
+      Электронные книги
+    </button>
+      {% for i in filtered_books %}
+    <a href="{% url 'book_detail' i.pk %}"><button type="button" class="list-group-item list-group-item-action">{{ i.name }}</button></a>
+      {% endfor %}
+  </div>
+{% endblock %}

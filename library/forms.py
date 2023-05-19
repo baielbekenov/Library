@@ -2,7 +2,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from library.models import User, IssuedDocument
+from library.models import User, IssuedDocument, Message
 
 
 class IssuedDocumentForm(forms.ModelForm):
@@ -36,4 +36,10 @@ class UserRegisterForm(UserCreationForm):
             'password2': forms.PasswordInput(attrs={'class': 'form-control'}),
 
         }
+
+
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = '__all__'
 

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Книга{% endblock %}
+
+{% block content %}
+
+<p>Названия: {{ book.name }}</p>
+<p>Автор: {{ book.author }}</p>
+<p>Категорий: {{ book.category }}</p>
+<p>Баркод: {{ book.barcode }}</p>
+<p>Цифровой: {{ book.is_digital }}</p>
+<p>Том: {{ book.tom }}</p>
+<p>Часть: {{ book.part }}</p>
+<p>Издательство: {{ book.izdat }}</p>
+<p>Место: {{ book.place }}</p>
+<p>Год издания: {{ book.created_year }}</p>
+<p>Количество страниц: {{ book.amount_of_pages }}</p>
+<p>Инвентарный номер: {{ book.invented_number }}</p>
+<p>Файл: {% if is_digital == False %}<a href="{{ book.file.url }}"> {% endif %}{{ book.file }}</a> </p>
+{% endblock %}

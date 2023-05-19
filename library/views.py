@@ -1,17 +1,18 @@
 from django.contrib import messages
-from django.contrib.auth import get_user_model, login, authenticate
+from django.contrib.auth import get_user_model, login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
+from django.db.models import Q
 from django.http import Http404, HttpResponse
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
 
 from django.views.generic import ListView, CreateView
 
-from library.forms import BookFilterForm, UserRegisterForm, IssuedDocumentForm
-from library.models import Message, Thread, IssuedDocument, Book, Barcode, Category
+from library.forms import BookFilterForm, UserRegisterForm, IssuedDocumentForm, MessageForm
+from library.models import Message, IssuedDocument, Book, Barcode, Category
 
 User = get_user_model()
 
@@ -47,51 +48,27 @@ def loginpage(request):
     form = AuthenticationForm()
     return render(request=request, template_name="login.html", context={"login_form": form})
 
-
-class ThreadView(View):
-    template_name = 'chat.html'
-
-    def get_queryset(self):
-        return Thread.objects.by_user(self.request.user)
-
-    def get_object(self):
-        other_username  = self.kwargs.get("username")
-        self.other_user = get_user_model().objects.get(username=other_username)
-        obj = Thread.objects.get_or_create_personal_thread(self.request.user, self.other_user)
-        if obj == None:
-            raise Http404
-        return obj
-
-    def get_context_data(self, **kwargs):
-        context = {}
-        context['me'] = self.request.user
-        context['thread'] = self.get_object()
-        context['user'] = self.other_user
-        context['messages'] = self.get_object().message_set.all()
-        return context
-
-    def get(self, request, **kwargs):
-        context = self.get_context_data(**kwargs)
-        return render(request, self.template_name, context=context)
-
-    def post(self, request, **kwargs):
-        self.object = self.get_object()
-        thread = self.get_object()
-        data = request.POST
-        user = request.user
-        text = data.get("message")
-        Message.objects.create(sender=user, thread=thread, text=text)
-        context = self.get_context_data(**kwargs)
-        return render(request, self.template_name, context=context)
+def logoutpage(request):
+    logout(request)
+    return redirect('login')
 
 
-# Create your views here.
-def index(request):
-    queryset = User.objects.all()
-    context = {'queryset': queryset}
+@login_required(login_url='login')
+def index(request, pk):
+    books = Book.objects.all().filter(category=pk)
+    filtered_books = Book.objects.all().filter(category=pk, is_digital=True)
+    context = {'books': books, 'filtered_books': filtered_books}
     return render(request, 'index.html', context)
 
 
+@login_required(login_url='login')
+def book_detail(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+    context = {'book': book}
+    return render(request, 'book_detail.html', context)
+
+
+@login_required(login_url='login')
 def base(request):
     category = Category.objects.all()
     context = {'category': category}
@@ -118,6 +95,25 @@ def createIsudoc(request):
     return render(request, 'createIsudoc.html', context)
 
 
+def send_message(request):
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.author = request.user  # присваиваем текущего пользователя автором
+            message.save()
+            return redirect('base')
+    else:
+        form = MessageForm()
+    return render(request, 'chat.html', {'form': form})
+
+
+def message(request):
+    messages = Message.objects.all()
+    context = {'messages': messages}
+    return render(request, 'chat.html', context)
+
+
 class IssuedDocumentListView(ListView):
     model = IssuedDocument
     template_name = 'isudoclist.html'
@@ -135,7 +131,7 @@ class IssuedDocumentListView(ListView):
         context['filter'] = self.request.GET.get('filter', '')
         return context
 
-
+@login_required(login_url='login')
 def search(request):
     books = Book.objects.all()
     form = BookFilterForm(request.GET)
@@ -161,5 +157,17 @@ def search(request):
     return render(request, 'search_results.html', context)
 
 
+class Search(ListView):
+    paginated_by = 3
+    template_name = 'book_search.html'
 
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        object_list = Book.objects.filter(Q(name__icontains=query))
+        return object_list
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['q'] = self.request.GET.get('q')
+        return context
 

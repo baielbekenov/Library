@@ -1,79 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Chat</title>
-</head>
-<body>
-    <h3>You: {{me.username}}</h3>
-    <h3>Thread: {{user.username}}</h3>
-    <ul id="message-list">
-        {% for message in messages %}
-        <li>[{{message.sender.username}}]: {{message.text}}</li>
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %} Найденная книга {% endblock %}
+
+{% block content %}
+    <h1>Messages</h1>
+    <ul>
+        {% for i in messages %}
+            <li>Author: {{ i.author }}</li>
+            <li>Title: {{ i.title }}</li>
+            <li>Text: {{ i.text }}</li>
         {% endfor %}
     </ul>
-    <form id="message-form">
-        {% csrf_token %}
-        <input type="text" name="message" id="message" required>
-        <input type="submit" value="Send" class="btn">
-    </form>
 
-<script>
-    const url = 'ws://localhost:8000/ws' + window.location.pathname;
-    const ws = new WebSocket(url)
-    ws.onopen = function(event) {
-        console.log("Connection is opened");
-    }
-
-    ws.onmessage = function(event) {
-        console.log(event);
-        console.log("Message is received");
-        const ul = document.getElementById('message-list')
-        var li = document.createElement('li')
-        var data = JSON.parse(event.data);
-        li.append(document.createTextNode(
-            '[' + data.username + ']:' + data.text
-        ))
-        ul.append(li);
-    }
-
-    ws.onclose = function(event) {
-        console.log("Connection is closed");
-    }
-
-    ws.onerror = function(event) {
-        console.log("Something went wrong");
-    }
-
-    const messageForm = document.getElementById('message-form')
-    messageForm.addEventListener('submit', sendMessage)
-    function sendMessage(e) {
-        if (e.preventDefault) e.preventDefault();
-        ws.send(document.getElementById('message').value);
-        messageForm.reset()
-        return false;
-</script>
-
-<style>
-    ul {
-        margin: 0;
-        padding: 0;
-    }
-    li {
-        list-style: none;
-        padding: 10px;
-    }
-
-    input {
-        padding: 10px;
-    }
-
-    .btn {
-        background: black;
-        color: white;
-        box-shadow: none;
-        border: 2px solid black;
-    }
-</style>
-</body>
-</html>
+    {% for i in messages %}
+              <p>Author: {{ i.author }}</p>
+              <p>Title: {{ i.title }}</p>
+              <p>Text: {{ i.text }}</p>
+        {% endfor %}
+    <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-8">
+              <h1 class="mt-2">Отправить сообщение</h1>
+              <hr class="mt-0 mb-4">
+                <form action="{% url 'send_message' %}" method="post">
+                    {% csrf_token %}
+                    {{ form.title|as_crispy_field }}
+                    {{ form.text|as_crispy_field }}
+                    <button type="submit">Отправить</button>
+                </form>
+            </div>
+          </div>
+    </div>
+{% endblock %}
