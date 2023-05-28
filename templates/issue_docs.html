@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 
-{% load crispy_forms_tags %}
-
-{% block title %} Выданные книги {% endblock %}
+{% block title %}Полученные книги{% endblock %}
 
 {% block content %}
     <div class="container">
@@ -19,7 +17,7 @@
               <th scope="col">Названия библиотеки</th>
             </tr>
           </thead>
-            {% for request in issuedoc %}
+            {% for request in issue_docs %}
           <tbody>
             <tr>
               <th scope="row">{{ request.name }}</th>

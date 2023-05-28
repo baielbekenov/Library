@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model, login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.http import Http404, HttpResponse
 
@@ -11,7 +12,7 @@ from django.views import View
 
 from django.views.generic import ListView, CreateView
 
-from library.forms import BookFilterForm, UserRegisterForm, IssuedDocumentForm, MessageForm
+from library.forms import BookFilterForm, UserRegisterForm, IssuedDocumentForm, MessageForm, BookForm, CategoryForm
 from library.models import Message, IssuedDocument, Book, Barcode, Category
 
 User = get_user_model()
@@ -63,8 +64,14 @@ def index(request, pk):
 
 @login_required(login_url='login')
 def book_detail(request, pk):
-    book = get_object_or_404(Book, pk=pk)
-    context = {'book': book}
+    try:
+        book = Book.objects.get(id=pk)
+    except ObjectDoesNotExist:
+        book = None
+
+    context = {
+        'book': book,
+    }
     return render(request, 'book_detail.html', context)
 
 
@@ -85,14 +92,52 @@ def createIsudoc(request):
     if request.method == 'POST':
         form = IssuedDocumentForm(request.POST)
         if form.is_valid():
+            createisu = form.save(commit=False)
+            book = get_object_or_404(Book, id=createisu.name_id)
+            createisu.author_document = book.author
+            createisu.izdat_year = book.created_year
+            createisu.name_of_lib = book.category
+
             form.save()
 
-            return HttpResponse('Добавлено')
+            return redirect('/')
     else:
         form = IssuedDocumentForm()
 
     context = {'form': form}
     return render(request, 'createIsudoc.html', context)
+
+@login_required(login_url='login')
+def addbook(request):
+    if request.method == 'POST':
+        form = BookForm(request.POST)
+        if form.is_valid():
+            form.save()
+
+            return HttpResponse('Добавлено')
+    else:
+        form = BookForm()
+    context = {'form': form}
+    return render(request, 'addbook.html', context)
+
+@login_required(login_url='login')
+def addcategory(request):
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+
+            return HttpResponse('Добавлено')
+    else:
+        form = CategoryForm()
+    context = {'form': form}
+    return render(request, 'addcategory.html', context)
+
+
+def get_issue_docs(request):
+    issue_docs = IssuedDocument.objects.filter(name_of_reader=request.user)
+    context = {'issue_docs': issue_docs}
+    return render(request, 'issue_docs.html', context)
 
 
 def send_message(request):

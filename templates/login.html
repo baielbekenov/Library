@@ -19,7 +19,9 @@
                     {% csrf_token %}
                     {{ login_form.username|as_crispy_field }}
                     {{ login_form.password|as_crispy_field }}
+                    <a><a href="{% url 'register' %}">Зарегистрироваться</a></p>
                     <button type="submit">Войти</button>
+
                 </form>
             </div>
           </div>

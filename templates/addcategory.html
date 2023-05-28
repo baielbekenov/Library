@@ -5,23 +5,16 @@
 {% block title %} Добавление книги {% endblock %}
 
 {% block content %}
-<body>
     <div class="container">
           <div class="row justify-content-center">
             <div class="col-8">
-              <h1 class="mt-2">Выдать книгу</h1>
+              <h1 class="mt-2">Добавить категорию</h1>
               <hr class="mt-0 mb-4">
                 <form method="post">
                 {% csrf_token %}
                 {{ form.name|as_crispy_field }}
-
-
-                {{ form.date_issued|as_crispy_field }}
-                {{ form.date_give|as_crispy_field }}
-                {{ form.name_of_reader|as_crispy_field }}
-                {{ form.number_read_bilet|as_crispy_field }}
-
-                <button type="submit" class="btn btn-success">Выдать</button>
+                {{ form.image|as_crispy_field }}
+                <button type="submit" class="btn btn-success">Добавить</button>
                 </form>
             </div>
           </div>

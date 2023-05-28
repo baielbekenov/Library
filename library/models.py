@@ -5,6 +5,7 @@ from barcode.writer import ImageWriter
 from django.core.files import File
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class User(AbstractUser):
@@ -12,7 +13,7 @@ class User(AbstractUser):
     is_simple_user = models.BooleanField(verbose_name=('Пользователь'), default=False)
 
     def __str__(self):
-        return self.username
+        return self.first_name + ' ' + self.last_name
 
 
 class Barcode(models.Model):
@@ -53,7 +54,7 @@ class Book(models.Model):
     part = models.CharField(max_length=50, verbose_name='Часть', blank=True, null=True)
     izdat = models.CharField(max_length=100, verbose_name='Издательство', blank=True, null=True)
     place = models.CharField(max_length=100, verbose_name='Место', blank=True, null=True)
-    created_year = models.DateField()
+    created_year = models.DateField(verbose_name='Дата выпуска')
     amount_of_pages = models.IntegerField(verbose_name='Количество страниц', blank=True, null=True)
     invented_number = models.IntegerField(verbose_name='Инвентарный номер', blank=True, null=True)
 
@@ -62,16 +63,19 @@ class Book(models.Model):
 
 
 class IssuedDocument(models.Model):
-    name = models.CharField(max_length=100, verbose_name='Название книги')
-    author_document = models.CharField(max_length=60, verbose_name='Автор книги')
+    name = models.ForeignKey(Book, on_delete=models.CASCADE, verbose_name='Название книги')
+    author_document = models.CharField(max_length=120, verbose_name='Автор')
     izdat_year = models.DateField(verbose_name='Год издания книги')
-    date_issued = models.DateField(verbose_name='Дата выдачи документа')
-    name_of_reader = models.CharField(max_length=150, verbose_name='ФИО получателя')
-    number_read_bilet = models.IntegerField(verbose_name='Номер читательского билета')
-    name_of_lib = models.CharField(max_length=100, verbose_name='Из какой категории')
+    date_issued = models.DateField(verbose_name='Дата выдачи книги')
+    date_give = models.DateField(verbose_name='Дата возврата книги')
+    name_of_reader = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='ФИО получателя')
+    number_read_bilet = models.IntegerField(validators=[MinValueValidator(1000),
+                                                        MaxValueValidator(9999)],
+                                            help_text='Введите четыре цифры', verbose_name='Читательский билет')
+    name_of_lib = models.CharField(max_length=120, verbose_name='Из какой категории')
 
     def __str__(self):
-        return self.name
+        return self.author_document
 
 
 class Message(models.Model):

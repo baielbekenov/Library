@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %} Добавление книги {% endblock %}
+
+{% block content %}
+    <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-8">
+              <h1 class="mt-2">Добавить книгу</h1>
+              <hr class="mt-0 mb-4">
+                <form method="post">
+                {% csrf_token %}
+                {{ form.name|as_crispy_field }}
+                {{ form.author|as_crispy_field }}
+                {{ form.category|as_crispy_field }}
+                {{ form.barcode|as_crispy_field }}
+                {{ form.is_digital|as_crispy_field }}
+                {{ form.file|as_crispy_field }}
+                {{ form.tom|as_crispy_field }}
+                {{ form.part|as_crispy_field }}
+                {{ form.izdat|as_crispy_field }}
+                {{ form.place|as_crispy_field }}
+                {{ form.created_year|as_crispy_field }}
+                {{ form.amount_of_pages|as_crispy_field }}
+                {{ form.invented_number|as_crispy_field }}
+                <button type="submit" class="btn btn-success">Добавить</button>
+                </form>
+            </div>
+          </div>
+    </div>
+{% endblock %}

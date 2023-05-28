@@ -16,5 +16,13 @@
 <p>Год издания: {{ book.created_year }}</p>
 <p>Количество страниц: {{ book.amount_of_pages }}</p>
 <p>Инвентарный номер: {{ book.invented_number }}</p>
-<p>Файл: {% if is_digital == False %}<a href="{{ book.file.url }}"> {% endif %}{{ book.file }}</a> </p>
+{% if book %}
+    {% if book.file %}
+        <a href="{{ book.file.url }}">Скачать книгу</a>
+    {% else %}
+        <span>Книга недоступна для скачивания</span>
+    {% endif %}
+{% else %}
+    <span>Ошибка: Книга не найдена</span>
+{% endif %}
 {% endblock %}

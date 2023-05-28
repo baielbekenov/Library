@@ -2,13 +2,14 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from library.models import User, IssuedDocument, Message
+from library.models import User, IssuedDocument, Message, Book, Category
 
 
 class IssuedDocumentForm(forms.ModelForm):
     class Meta:
         model = IssuedDocument
-        fields = '__all__'
+        fields = ['name', 'date_issued', 'date_give',
+                  'name_of_reader', 'number_read_bilet']
 
 
 class BookFilterForm(forms.Form):
@@ -43,3 +44,14 @@ class MessageForm(forms.ModelForm):
         model = Message
         fields = '__all__'
 
+
+class BookForm(forms.ModelForm):
+    class Meta:
+        model = Book
+        fields = '__all__'
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = '__all__'

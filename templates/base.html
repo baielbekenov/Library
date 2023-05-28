@@ -23,6 +23,9 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="{% url 'logout' %}">Выйти</a>
         </li>
+        <li>
+          <a class="nav-link active" aria-current="page" href="{% url 'base' %}">Главная страница</a>
+        </li>
         {% if user.is_not_authenticated %}
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{% url 'login' %}">Войти</a>
@@ -32,22 +35,14 @@
           </li>
         {% endif %}
         <li>
-          <a class="dropdown-item" href="{% url 'search_results' %}">Поиск по фильтрам</a>
+          <a class="nav-link active" aria-current="page" href="{% url 'search_results' %}">Поиск по фильтрам</a>
         </li>
         <li>
-          <a class="dropdown-item" href="{% url 'send_message' %}">Чат</a>
+          <a class="nav-link active" aria-current="page" href="{% url 'send_message' %}">Чат</a>
         </li>
-        {% if user.is_authenticated %}
-          {% if user.is_superuser %}
-            <li>
-              <a class="dropdown-item" href="{% url 'isudoclist' %}">Кому выдано книг</a>
-            </li>
-            <li>
-              <a class="dropdown-item" href="{% url 'createIsudoc' %}">Выдать книгу</a>
-            </li>
-          {% endif %}
-        {% endif %}
-
+        <li>
+          <a class="nav-link active" aria-current="page" href="{% url 'issue_docs' %}">Полученные книги</a>
+        </li>
 
       </ul>
       <form action="{% url 'search' %}" method="get" class="d-flex">
@@ -60,7 +55,23 @@
   <div class="container">
     {% block content %}
     <div class="sidebar">
+      {% if user.is_authenticated %}
+          {% if user.is_superuser %}
+            <a href="{% url 'addcategory' %}"><button class="btn btn-primary" type="button">Добавить категорию</button></a>
+            <a href="{% url 'addbook' %}"><button class="btn btn-primary" type="button">Добавить книгу</button></a>
+            <a href="{% url 'createIsudoc' %}"><button class="btn btn-primary" type="button">Выдать книгу</button></a>
+            <a href="{% url 'isudoclist' %}"><button class="btn btn-primary" type="button">Кому выдано книг</button></a>
+          {% endif %}
+      {% endif %}
+      <p>
 
+      </p>
+      <p>
+
+      </p>
+      <p>
+
+      </p>
       <div id="flexible">
         {% for i in category %}
           <div class="card" style="width: 18rem;">
