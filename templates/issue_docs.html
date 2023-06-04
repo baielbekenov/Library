@@ -12,8 +12,10 @@
               <th scope="col">Год издания</th>
               <th scope="col">Дата выдачи книги</th>
               <th scope="col">Дата возврата книги</th>
+              <th scope="col">Фактическая дата возврата</th>
               <th scope="col">ФИО получателя</th>
               <th scope="col">Номер читательского билета</th>
+              <th scope="col">ID студента</th>
               <th scope="col">Названия библиотеки</th>
             </tr>
           </thead>
@@ -25,8 +27,10 @@
               <td>{{ request.izdat_year }}</td>
               <td>{{ request.date_issued }}</td>
               <td>{{ request.date_give }}</td>
+              <td>{{ request.fact_give }}</td>
               <td>{{ request.name_of_reader }}</td>
               <td>{{ request.number_read_bilet }}</td>
+              <td>{{ request.id_student }}</td>
               <td>{{ request.name_of_lib }}</td>
             </tr>
           </tbody>

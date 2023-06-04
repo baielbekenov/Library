@@ -68,10 +68,12 @@ class IssuedDocument(models.Model):
     izdat_year = models.DateField(verbose_name='Год издания книги')
     date_issued = models.DateField(verbose_name='Дата выдачи книги')
     date_give = models.DateField(verbose_name='Дата возврата книги')
+    fact_give = models.DateField(verbose_name='Фактическая дата возврата')
     name_of_reader = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='ФИО получателя')
     number_read_bilet = models.IntegerField(validators=[MinValueValidator(1000),
                                                         MaxValueValidator(9999)],
                                             help_text='Введите четыре цифры', verbose_name='Читательский билет')
+    id_student = models.IntegerField(verbose_name='ID студента', blank=True, null=True)
     name_of_lib = models.CharField(max_length=120, verbose_name='Из какой категории')
 
     def __str__(self):

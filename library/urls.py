@@ -14,6 +14,7 @@ urlpatterns = [
     path('addcategory/', addcategory, name='addcategory'),
     path('issue_docs/', get_issue_docs, name='issue_docs'),
     path('isudoclist/', IssuedDocumentListView.as_view(), name='isudoclist'),
+    path('export_excel/int:rows/', export_excel, name='export_excel'),
     path('search_results/', search, name='search_results'),
     path('send_message/', send_message, name='send_message'),
     path('search/', Search.as_view(), name='search'),

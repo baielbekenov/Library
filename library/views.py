@@ -1,3 +1,5 @@
+import datetime
+import xlwt
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login, authenticate, logout
 from django.contrib.auth.decorators import login_required
@@ -119,6 +121,37 @@ def addbook(request):
         form = BookForm()
     context = {'form': form}
     return render(request, 'addbook.html', context)
+
+
+def export_excel(rows):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=Expenses' + \
+        str(datetime.datetime.now()) + '.xls'
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Expenses')
+    row_num = 0
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    columns = ['Название книги', 'Автор', 'Год издания', 'Дата выдачи книг',
+               'Дата возврата книг', 'Фактическая дата возврата', 'ФИО получателя',
+               'Номер читательского билета', 'ID студента', 'Названия библиотеки']
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    font_style = xlwt.XFStyle()
+    rows = IssuedDocument.objects.all().values_list('name', 'author_document', 'izdat_year', 'date_issued',
+                                                    'date_give', 'fact_give', 'name_of_reader',
+                                                    'number_read_bilet', 'id_student', 'name_of_lib')
+
+    for row in rows:
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, str(row[col_num]), font_style)
+    wb.save(response)
+
+    return response
+
 
 @login_required(login_url='login')
 def addcategory(request):
