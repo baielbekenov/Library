@@ -9,7 +9,7 @@ class IssuedDocumentForm(forms.ModelForm):
     class Meta:
         model = IssuedDocument
         fields = ['name', 'date_issued', 'date_give',
-                  'name_of_reader', 'number_read_bilet']
+                  'name_of_reader']
 
 
 class BookFilterForm(forms.Form):
@@ -26,7 +26,8 @@ class UserRegisterForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2', 'first_name', 'last_name']
+        fields = ['username', 'email', 'password1', 'password2', 'first_name', 'last_name',
+                  'group', 'semester', 'id_student', 'number_read_bilet']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),

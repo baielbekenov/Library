@@ -11,6 +11,13 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 class User(AbstractUser):
     is_employee = models.BooleanField(verbose_name=('Сотрудник'), default=False)
     is_simple_user = models.BooleanField(verbose_name=('Пользователь'), default=False)
+    group = models.CharField(max_length=60, verbose_name='Группа')
+    semester = models.IntegerField(validators=[MinValueValidator(1),
+                                                        MaxValueValidator(9)], verbose_name='Семестер')
+    id_student = models.IntegerField(verbose_name='ID студента', blank=True, null=True)
+    number_read_bilet = models.IntegerField(validators=[MinValueValidator(1000),
+                                                        MaxValueValidator(9999)],
+                                            help_text='Введите четыре цифры', verbose_name='Читательский билет')
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
@@ -64,12 +71,17 @@ class Book(models.Model):
 
 class IssuedDocument(models.Model):
     name = models.ForeignKey(Book, on_delete=models.CASCADE, verbose_name='Название книги')
+    book_name = models.CharField(max_length=120, verbose_name='Название книги', blank=True, null=True)
     author_document = models.CharField(max_length=120, verbose_name='Автор')
     izdat_year = models.DateField(verbose_name='Год издания книги')
     date_issued = models.DateField(verbose_name='Дата выдачи книги')
     date_give = models.DateField(verbose_name='Дата возврата книги')
-    fact_give = models.DateField(verbose_name='Фактическая дата возврата')
+    fact_give = models.DateField(verbose_name='Фактическая дата возврата', blank=True, null=True)
     name_of_reader = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='ФИО получателя')
+    name_of_reader2 = models.CharField(max_length=120, verbose_name='ФИО получателя', blank=True, null=True)
+    group = models.CharField(max_length=60, verbose_name='Группа', blank=True, null=True)
+    semester = models.IntegerField(validators=[MinValueValidator(1),
+                                               MaxValueValidator(9)], verbose_name='Семестер', blank=True, null=True)
     number_read_bilet = models.IntegerField(validators=[MinValueValidator(1000),
                                                         MaxValueValidator(9999)],
                                             help_text='Введите четыре цифры', verbose_name='Читательский билет')

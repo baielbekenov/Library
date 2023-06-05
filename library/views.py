@@ -96,9 +96,16 @@ def createIsudoc(request):
         if form.is_valid():
             createisu = form.save(commit=False)
             book = get_object_or_404(Book, id=createisu.name_id)
+            use = get_object_or_404(User, id=createisu.name_of_reader_id)
             createisu.author_document = book.author
+            createisu.book_name = book.name
             createisu.izdat_year = book.created_year
             createisu.name_of_lib = book.category
+            createisu.name_of_reader2 = use.first_name + ' ' + use.last_name
+            createisu.group = use.group
+            createisu.semester = use.semester
+            createisu.number_read_bilet = use.number_read_bilet
+            createisu.id_student = use.id_student
 
             form.save()
 
@@ -134,14 +141,15 @@ def export_excel(rows):
     font_style.font.bold = True
     columns = ['Название книги', 'Автор', 'Год издания', 'Дата выдачи книг',
                'Дата возврата книг', 'Фактическая дата возврата', 'ФИО получателя',
+               'Группа', 'Семестер',
                'Номер читательского билета', 'ID студента', 'Названия библиотеки']
 
     for col_num in range(len(columns)):
         ws.write(row_num, col_num, columns[col_num], font_style)
 
     font_style = xlwt.XFStyle()
-    rows = IssuedDocument.objects.all().values_list('name', 'author_document', 'izdat_year', 'date_issued',
-                                                    'date_give', 'fact_give', 'name_of_reader',
+    rows = IssuedDocument.objects.all().values_list('book_name', 'author_document', 'izdat_year', 'date_issued',
+                                                    'date_give', 'fact_give', 'name_of_reader2', 'group', 'semester',
                                                     'number_read_bilet', 'id_student', 'name_of_lib')
 
     for row in rows:
@@ -151,6 +159,12 @@ def export_excel(rows):
     wb.save(response)
 
     return response
+
+
+def users(request):
+    user = User.objects.all()
+    context = {'user': user}
+    return render(request, 'users.html', context)
 
 
 @login_required(login_url='login')

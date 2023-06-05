@@ -7,6 +7,7 @@ urlpatterns = [
     path('index/<int:pk>/', index, name='index'),
     path('book_detail/<int:pk>/', book_detail, name='book_detail'),
     path('register/', register, name='register'),
+    path('users/', users, name='users'),
     path('login/', loginpage, name='login'),
     path('logout/', logoutpage, name='logout'),
     path('createIsudoc/', createIsudoc, name='createIsudoc'),

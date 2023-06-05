@@ -16,6 +16,8 @@
               <th scope="col">Дата возврата книги</th>
               <th scope="col">Фактическая дата возврата</th>
               <th scope="col">ФИО получателя</th>
+              <th scope="col">Группа</th>
+              <th scope="col">Семестер</th>
               <th scope="col">Номер читательского билета</th>
               <th scope="col">ID студента</th>
               <th scope="col">Названия библиотеки</th>
@@ -24,13 +26,15 @@
             {% for request in issuedoc %}
           <tbody>
             <tr>
-              <th scope="row">{{ request.name }}</th>
+              <th scope="row">{{ request.book_name }}</th>
               <td>{{ request.author_document }}</td>
               <td>{{ request.izdat_year }}</td>
               <td>{{ request.date_issued }}</td>
               <td>{{ request.date_give }}</td>
               <td>{{ request.fact_give }}</td>
-              <td>{{ request.name_of_reader }}</td>
+              <td>{{ request.name_of_reader2 }}</td>
+              <td>{{ request.group }}</td>
+              <td>{{ request.semester }}</td>
               <td>{{ request.number_read_bilet }}</td>
               <td>{{ request.id_student }}</td>
               <td>{{ request.name_of_lib }}</td>

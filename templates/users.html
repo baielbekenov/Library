@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Книги{% endblock %}
+
+{% block content %}
+  <div class="list-group">
+    <button type="button" class="list-group-item list-group-item-action active" aria-current="true">
+      Пользователи
+    </button>
+
+      <table class="table table-white">
+    <thead>
+            <tr >
+              <th scope="col">ФИО</th>
+              <th scope="col">Группа</th>
+              <th scope="col">Семестер</th>
+              <th scope="col">ID студента</th>
+              <th scope="col">Номер читательского билета</th>
+            </tr>
+          </thead>
+            {% for request in user %}
+          <tbody>
+            <tr>
+                <td>{{ request.first_name }} {{ request.last_name }}</td>
+                <td>{{ request.group }}</td>
+                <td>{{ request.semester }}</td>
+                <td>{{ request.id_student }}</td>
+                <td>{{ request.number_read_bilet }}</td>
+
+            </tr>
+          </tbody>
+            {% endfor %}
+      </table>
+  </div>
+{% endblock %}
